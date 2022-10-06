@@ -1,24 +1,4 @@
 # thirtysix
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+The 36 Questions That Lead to Love
+https://www.nytimes.com/2015/01/09/style/no-37-big-wedding-or-small.html
