@@ -1,4 +1,3 @@
-# thirtysix
+# Moral Quarrel
 
-The 36 Questions That Lead to Love
-https://www.nytimes.com/2015/01/09/style/no-37-big-wedding-or-small.html
+This is from King's Quest 2016 third Episode: Once Upon A Climb.

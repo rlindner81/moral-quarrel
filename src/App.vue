@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar title="ThirtySix">
+    <v-app-bar title="Moral Quarrel">
       <v-btn icon="mdi-fast-forward mdi-rotate-180" @click="prevSet"></v-btn>
       <v-btn icon="mdi-play mdi-rotate-180" @click="questionIndex > 0 && questionIndex--"></v-btn>
       <v-btn icon="mdi-play" @click="questionIndex < sets[setIndex].length - 1 && questionIndex++"></v-btn>
