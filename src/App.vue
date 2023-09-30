@@ -1,32 +1,41 @@
 <template>
   <v-app>
     <v-app-bar title="Moral Quarrel">
-      <v-btn icon="mdi-fast-forward mdi-rotate-180" @click="prevSet"></v-btn>
-      <v-btn icon="mdi-play mdi-rotate-180" @click="questionIndex > 0 && questionIndex--"></v-btn>
-      <v-btn icon="mdi-play" @click="questionIndex < sets[setIndex].length - 1 && questionIndex++"></v-btn>
-      <v-btn icon="mdi-fast-forward" @click="nextSet"></v-btn>
+      <v-btn icon="mdi-play mdi-rotate-180" @click="backClick"></v-btn>
+      <v-btn icon="mdi-play" @click="forwardClick"></v-btn>
+      <v-btn icon="mdi-scale-balance" @click="finishClick"></v-btn>
     </v-app-bar>
 
     <v-main>
       <v-container class="background-image-outer">
-        <v-container
-          class="background-image"
-          :style="{ backgroundImage: 'url(\'images/' + setBackgrounds[setIndex] + '\')' }"
-        >
-          <v-card
-            class="mx-auto my-16"
-            max-width="480"
-            v-if="sets[setIndex][questionIndex]"
-            :title="`Set ${setNumberNames[setIndex]}`"
-            :subtitle="`Question ${questionIndex + 1}`"
-          >
-            <v-card-text>
-              <p class="text-h5 text--primary">
-                {{ sets[setIndex][questionIndex] }}
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-container>
+        <v-card class="mx-auto my-16" max-width="480" v-if="!showFinish">
+          <v-card-text>
+            <p class="text-h5 text--primary">
+              {{ cards[cardIndex].text }}
+            </p>
+            <br />
+            <p
+              class="text-h6 text--primary"
+              v-for="(choice, choiceIndex) in cards[cardIndex].choices"
+              :key="choiceIndex"
+            >
+              {{ choiceNames[choiceIndex] + ") " + choice.text }}
+            </p>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="pickChoice(cards[cardIndex].choices[0])">Pick {{ choiceNames[0] }}</v-btn>
+            <v-btn @click="pickChoice(cards[cardIndex].choices[1])">Pick {{ choiceNames[1] }}</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card class="mx-auto my-16" max-width="480" v-else>
+          <v-card-text>
+            <p class="text-h5 text--primary">Finished</p>
+            <br />
+            <p class="text-h6 text--primary" v-for="(choice, choiceIndex) in this.choices" :key="choiceIndex">
+              {{ choice.text }}
+            </p>
+          </v-card-text>
+        </v-card>
       </v-container>
     </v-main>
   </v-app>
@@ -50,92 +59,123 @@ function shuffle(array) {
   return array;
 }
 
-const setBackgrounds = shuffle([
-  "alvin-mahmudov-PSw1Ju18Rf4-unsplash-xs.jpg",
-  "atharva-dharmadhikari-XnH8c4so-wE-unsplash-xs.jpg",
-  "clay-banks-fqgt7A43-K0-unsplash-xs.jpg",
-  "gaspar-zaldo-Z9NAI0mf1KA-unsplash-xs.jpg",
-  "heather-mount-8c3zjKrkkBA-unsplash-xs.jpg",
-  "jacob-rank-pGKyqck99cg-unsplash-xs.jpg",
-  "jonathan-borba-KvMBOln0_u8-unsplash-xs.jpg",
-  "kenny-eliason-n2VvngfbXtU-unsplash-xs.jpg",
-  "margarida-afonso-AkbqqbAV1lU-unsplash-xs.jpg",
-  "morgan-sessions-6fDYNGgjqpM-unsplash-xs.jpg",
-  "sandy-millar-JQlZccfmCgQ-unsplash-xs.jpg",
-  "scott-broome-BcVvVvqiCGA-unsplash-xs.jpg",
-  "tim-mossholder-EgAduzpSvdE-unsplash-xs.jpg",
-]).slice(0, 3);
-
-const setNumberNames = ["One", "Two", "Three"];
-
-const sets = [
-  shuffle([
-    "Given the choice of anyone in the world, whom would you want as a dinner guest?",
-    "Would you like to be famous? In what way?",
-    "Before making a telephone call, do you ever rehearse what you are going to say? Why?",
-    "What would constitute a “perfect” day for you?",
-    "When did you last sing to yourself? To someone else?",
-    "If you were able to live to the age of 90 and retain either the mind or body of a 30-year-old for the last 60 years of your life, which would you want?",
-    "Do you have a secret hunch about how you will die?",
-    "Name three things you and your partner appear to have in common.",
-    "For what in your life do you feel most grateful?",
-    " If you could change anything about the way you were raised, what would it be?",
-    " Take four minutes and tell your partner your life story in as much detail as possible.",
-    " If you could wake up tomorrow having gained any one quality or ability, what would it be?",
-  ]),
-  shuffle([
-    "If a crystal ball could tell you the truth about yourself, your life, the future or anything else, what would you want to know?",
-    "Is there something that you’ve dreamed of doing for a long time? Why haven’t you done it?",
-    "What is the greatest accomplishment of your life?",
-    "What do you value most in a friendship?",
-    "What is your most treasured memory?",
-    "What is your most terrible memory?",
-    "If you knew that in one year you would die suddenly, would you change anything about the way you are now living? Why?",
-    "What does friendship mean to you?",
-    "What roles do love and affection play in your life?",
-    "Alternate sharing something you consider a positive characteristic of your partner. Share a total of five items.",
-    "How close and warm is your family? Do you feel your childhood was happier than most other people’s?",
-    "How do you feel about your relationship with your mother?",
-  ]),
-  shuffle([
-    "Make three true “we” statements each. For instance, “We are both in this room feeling ... “",
-    "Complete this sentence: “I wish I had someone with whom I could share ... “",
-    "If you were going to become a close friend with your partner, please share what would be important for him or her to know.",
-    "Tell your partner what you like about them; be very honest this time, saying things that you might not say to someone you’ve just met.",
-    "Share with your partner an embarrassing moment in your life.",
-    "When did you last cry in front of another person? By yourself?",
-    "Tell your partner something that you like about them already.",
-    "What, if anything, is too serious to be joked about?",
-    "If you were to die this evening with no opportunity to communicate with anyone, what would you most regret not having told someone? Why haven’t you told them yet?",
-    "Your house, containing everything you own, catches fire. After saving your loved ones and pets, you have time to safely make a final dash to save any one item. What would it be? Why?",
-    "Of all the people in your family, whose death would you find most disturbing? Why?",
-    "Share a personal problem and ask your partner’s advice on how he or she might handle it. Also, ask your partner to reflect back to you how you seem to be feeling about the problem you have chosen.",
-  ]),
-];
+const choiceNames = ["A", "B"];
+const cards = shuffle([
+  {
+    text: "A magical genie offers you one of two very specific wishes. A, you can live one life that lasts 1000 years, or B, you can live ten lives that last 100 years. Which do you choose?",
+    choices: shuffle([
+      { text: "You can live one life that lasts 1000 years", isThoughtful: true },
+      { text: "You can live ten lives that last 100 years", isPlayful: true },
+    ]),
+  },
+  {
+    text: "You are a Royal Guard on the lookout for an evil sorcerer that has been terrorizing villagers. When you finally apprehend this sorcerer you discover he is Charles, your childhood best friend. Do you...",
+    choices: shuffle([
+      { text: "Throw your friend in the castle dungeon", isThoughtful: true },
+      { text: "Tell Charles to leave town, and never return", isPlayful: true },
+    ]),
+  },
+  {
+    text: "Would you rather...",
+    choices: shuffle([
+      { text: "Have a pet dragon", isThoughtful: true },
+      { text: "Be a dragon", isPlayful: true },
+    ]),
+  },
+  {
+    text: "Would you rather...",
+    choices: shuffle([
+      { text: "Have noodles for hands that don't allow you to pick up anything", isThoughtful: true },
+      { text: "Have a tail that never stops loudly tapping against the ground", isPlayful: true },
+    ]),
+  },
+  {
+    text: "Would you rather...",
+    choices: shuffle([
+      { text: "Constantly reek of syrup and not smell it", isThoughtful: true },
+      { text: "Constantly smell reeking syrup", isPlayful: true },
+    ]),
+  },
+  {
+    text: "A rich merchant inadvertently drops one shiny, gold coin on the ground. You see a poor, hungry orphan pick it you. Do you...",
+    choices: shuffle([
+      { text: "Convince the orphan to be honest and return the coin", isThoughtful: true },
+      { text: "Turn your head the other way and let the orphan keep the coin", isPlayful: true },
+    ]),
+  },
+  {
+    text: "You have been hunting for your starving family all day and only managed to catch a small goose. On your way back home, a hungry beggar offers you magic beans in return for the goose. The beggar tells you that the beanstalk that sprouts from his beans will lead you to a chest that produces unlimited food. He would go after it himself, but his legs are too tired and old. Do you...",
+    choices: shuffle([
+      { text: "Kindly reject the offer and bring your starving family their dinner", isThoughtful: true },
+      { text: "Let the beggar eat the goose, and plant the beans in your yard", isPlayful: true },
+    ]),
+  },
+  {
+    text: "You are the kingdom's wizard doctor. In the middle of the night, an honorable knight and a despicable thief arrive at your door. The thief's injuries are much more severe than the knight's. Do you...",
+    choices: shuffle([
+      { text: "Heal the thief first", isThoughtful: true },
+      { text: "Heal the knight first", isPlayful: true },
+    ]),
+  },
+  {
+    text: "You are poor, and a thief pickpockets your only coin, forcing you to go hungry for the night. A few days later you see the same thief get robbed of his dinner by two bandits. You chase after the bandits and get back the stolen food. Do you...",
+    choices: shuffle([
+      { text: "Keep the food, teaching the thief a lesson", isThoughtful: true },
+      { text: "Return the food to the thief", isPlayful: true },
+    ]),
+  },
+  {
+    text: "Your best friend is planning to marry the love of their life. On the day of the wedding, you discover that their fiancé is a gremlin, using a magic spell to disguise themselves as a human. The gremlin assures you it loves your friend, and begs you to keep their secret. Do you...",
+    choices: shuffle([
+      { text: "Tell your friend anyway", isThoughtful: true },
+      { text: "Keep their secret", isPlayful: true },
+    ]),
+  },
+  {
+    text: "You have a job you love as the Royal Love Doctor, but during an appointment, your best friend's husband admits to you that he is in love with another woman. Do you...",
+    choices: shuffle([
+      { text: "Break the confidentiality policy and tell your friend, potentially getting fired?", isThoughtful: true },
+      {
+        text: "Advise the man to go back to his wife and hope your friend does not find out you knew he had eyes for another?",
+        isPlayful: true,
+      },
+    ]),
+  },
+]);
 
 export default {
   name: "App",
   methods: {
-    prevSet() {
-      if (this.setIndex > 0) {
-        this.setIndex--;
-        this.questionIndex = 0;
+    backClick() {
+      if (this.cardIndex > 0) {
+        this.cardIndex--;
       }
     },
-    nextSet() {
-      if (this.setIndex < this.sets.length - 1) {
-        this.setIndex++;
-        this.questionIndex = 0;
+    forwardClick() {
+      const lastIndex = this.cards.length - 1;
+      if (this.cardIndex === lastIndex) {
+        this.showFinish = true;
+        return;
       }
+      if (this.cardIndex < lastIndex) {
+        this.cardIndex++;
+      }
+    },
+    finishClick() {
+      this.showFinish = true;
+    },
+    pickChoice(choice) {
+      this.choices.push(choice);
+      this.forwardClick();
     },
   },
   data() {
     return {
-      setIndex: 0,
-      questionIndex: 0,
-      sets,
-      setNumberNames,
-      setBackgrounds,
+      showFinish: false,
+      cardIndex: 0,
+      cards,
+      choiceNames,
+      choices: [],
     };
   },
 };
@@ -145,20 +185,25 @@ export default {
 html {
   overflow: hidden !important;
 }
+
 .v-application.v-layout {
   background: radial-gradient(circle, rgba(121, 43, 129, 1) 0%, rgba(121, 37, 37, 1) 100%);
 }
+
 .v-app-bar,
 .v-card {
   opacity: 0.85;
 }
+
 .background-image-outer {
   height: 100%;
   max-width: 960px;
 }
+
 .background-image-outer.v-container {
   padding: 0;
 }
+
 .background-image {
   height: 100%;
   background-position: center top;
@@ -166,15 +211,18 @@ html {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
 @media (max-width: 960px) {
   .background-image {
     background-size: auto auto;
   }
 }
+
 * {
   touch-action: none;
   pointer-events: none;
 }
+
 input,
 button,
 a {
