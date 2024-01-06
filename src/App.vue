@@ -31,9 +31,8 @@
           <v-card-text>
             <p class="text-h5 text--primary">Finished</p>
             <br />
-            <p class="text-h6 text--primary" v-for="(choice, choiceIndex) in this.choices" :key="choiceIndex">
-              {{ choice.text }}
-            </p>
+            <p class="text-h6 text--primary">Thoughtful picks: {{ pickCountThoughtful }}</p>
+            <p class="text-h6 text--primary">Playful picks: {{ pickCountPlayful }}</p>
           </v-card-text>
         </v-card>
       </v-container>
@@ -165,7 +164,12 @@ export default {
       this.showFinish = true;
     },
     pickChoice(choice) {
-      this.choices.push(choice);
+      if (choice.isThoughtful) {
+        this.pickCountThoughtful++;
+      }
+      if (choice.isPlayful) {
+        this.pickCountPlayful++;
+      }
       this.forwardClick();
     },
   },
@@ -173,9 +177,10 @@ export default {
     return {
       showFinish: false,
       cardIndex: 0,
+      pickCountThoughtful: 0,
+      pickCountPlayful: 0,
       cards,
       choiceNames,
-      choices: [],
     };
   },
 };
